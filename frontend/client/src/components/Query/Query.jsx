@@ -10,7 +10,8 @@ function Query() {
 
     return (
         <>
-            <div className="mt-0">
+            <div className="flex flex-col justify-center mx-40">
+                <p className="text-4xl font-manrope font-bold text-cyan-950">Hello, Kyle</p>
                 <UserInput onSubmit={handleSubmit} />
                 <History history={history} />
             </div>

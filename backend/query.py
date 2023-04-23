@@ -111,5 +111,3 @@ def test():
         if user_input == 'exit':
             break
         print(gpt.predict(input=user_input))
-
-test()

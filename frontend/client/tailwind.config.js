@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'ssp': "'Source Sans Pro', sans-serif"
+        'ssp': "'Source Sans Pro', sans-serif",
+        'manrope': "'Manrope', sans-serif"
       }
     },
   },
