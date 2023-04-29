@@ -1,4 +1,5 @@
 import os
+import re
 import psycopg2
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
@@ -84,12 +85,6 @@ def init_system_template():
     """
     return system_message
 
-def query_openai(user_prompt):
-    prompt, llm_chain, chat = init_llm()
-    table_structure = get_postgres_schema()
-    response = llm_chain.run(user_prompt=user_prompt, table_structure=table_structure)
-    return response
-
 def init_conversation_chain():
     system_prompt = init_system_template()
     system_message_prompt = SystemMessagePromptTemplate.from_template(system_prompt)
@@ -103,6 +98,15 @@ def init_conversation_chain():
     memory = ConversationBufferMemory(return_messages=True)
     conversation = ConversationChain(memory=memory, prompt=prompt, llm=llm)
     return conversation
+
+def extract_sql_query(s: str):
+    pattern = r"```(.*?)```"
+    sql_query = re.search(pattern, s, re.DOTALL)
+    if sql_query:
+        return sql_query.group(1).strip()
+    else:
+        return None
+
 
 def test():
     gpt = init_conversation_chain()

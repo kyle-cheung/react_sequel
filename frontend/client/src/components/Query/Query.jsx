@@ -1,22 +1,41 @@
-import React, { useState, useEffect } from 'react'
-import UserInput from './UserInput/UserInput';
-import History from './History/History';
+import React, { useState } from "react"
+import axios from "axios"
+import UserInput from "./UserInput/UserInput"
+import History from "./History/History"
 
 function Query() {
-    const [history, setHistory] = useState([]);
-    const handleSubmit = (input) => {
-        setHistory([...history, input]);
-    };
+  const [messages, setMessages] = useState([])
 
-    return (
-        <>
-            <div className="flex flex-col justify-center mx-40">
-                <p className="text-4xl font-manrope font-bold text-cyan-950">Hello, Kyle</p>
-                <UserInput onSubmit={handleSubmit} />
-                <History history={history} />
-            </div>
-        </>
-    )
+  const handleUserInput = async input => {
+    // Add user input to the message history
+    setMessages(prevMessages => [
+      ...prevMessages,
+      { type: "user", content: input },
+    ])
+
+    try {
+      const response = await axios.post("/server/query", { userInput: input })
+      console.log(response.data.status)
+
+      // Add system response to the message history
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { type: "system", content: response.data.sql_query },
+      ])
+    } catch (error) {
+      console.error("Error making API call: ", error)
+    }
+  }
+
+  return (
+    <div className="flex flex-col justify-center mx-40">
+      <p className="text-4xl font-manrope font-bold text-cyan-950">
+        Hello, Kyle
+      </p>
+      <UserInput onSubmit={handleUserInput} />
+      <History messages={messages} />
+    </div>
+  )
 }
 
 export default Query
