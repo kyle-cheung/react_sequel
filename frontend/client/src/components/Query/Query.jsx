@@ -29,11 +29,11 @@ function Query() {
 
   return (
     <div className="flex flex-col justify-center mx-40">
-      <p className="text-4xl font-manrope font-bold text-cyan-950">
+      <p className="text-4xl font-manrope font-bold text-slate-200">
         Hello, Kyle
       </p>
       <UserInput onSubmit={handleUserInput} />
-      <History messages={messages} />
+      {messages.length > 0 && <History messages={messages} />}
     </div>
   )
 }

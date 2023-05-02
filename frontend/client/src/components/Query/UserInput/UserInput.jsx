@@ -24,7 +24,7 @@ const UserInput = ({ onSubmit }) => {
           placeholder="Ask your data..."
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleAction}
-          className="resize-none overflow-y-auto p-3 pr-12 w-full border border-gray-300 rounded-lg bg-gray-100 font-manrope"
+          className="resize-none overflow-y-auto p-3 pr-12 w-full border border-gray-300 rounded-lg bg-gray-200 font-manrope"
         />
         <button
           type="submit"
