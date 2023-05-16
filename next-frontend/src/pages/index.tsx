@@ -1,36 +1,38 @@
-import Head from 'next/head';
-import { Inter } from 'next/font/google'
-import { Fragment } from 'react';
-import { 
-  Box,
+import { type NextPageWithLayout } from "@/pages/_app";
+import { getLayout } from "@/layouts/MainLayout";
+import { Fragment } from "react";
+import {
   Button,
   Card,
+  CardBody,
   Center,
-  VStack
-} from '@chakra-ui/react';
-import Link from 'next/link';
-// import NavDrawer from '@/components/NavDrawer';
+  Flex,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+const Home: NextPageWithLayout = () => {
   return (
-    <Box>
-      <Head>
-        <title>BI Tool Thing</title>
-      </Head>
-      <Box>
-        <Center>
-          <Card w='50vw' h='20vh'>
-            <VStack paddingTop={24}>
-              <Box>Hello, Kyle</Box>
-              <Box>
-                <Button>Get Started</Button>
-              </Box>
-            </VStack>
-          </Card>
-        </Center>
-      </Box>
-    </Box>
-  )
-}
+    <Fragment>
+      <Flex justify="center">
+        <Card h="400px" width="full" maxW="700px">
+          <CardBody>
+            <Center h="full">
+              <VStack>
+                <Text fontSize="2xl">Hello, Kyle</Text>
+                <Button as={Link} href="/query">
+                  Get Started
+                </Button>
+              </VStack>
+            </Center>
+          </CardBody>
+        </Card>
+      </Flex>
+    </Fragment>
+  );
+};
+
+export default Home;
+
+Home.getLayout = getLayout;

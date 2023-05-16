@@ -1,20 +1,16 @@
-import Head from 'next/head';
-import { Inter } from 'next/font/google'
-import { Fragment } from 'react';
-import { Box } from '@chakra-ui/react';
-import Link from 'next/link';
+import { type NextPageWithLayout } from "@/pages/_app";
+import { getLayout } from "@/layouts/MainLayout";
+import { Fragment } from "react";
+import { Text } from "@chakra-ui/react";
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+const History: NextPageWithLayout = () => {
   return (
     <Fragment>
-      <Head>
-        <title>BI Tool Thing</title>
-      </Head>
-      <Box>
-        hi
-      </Box>
+      <Text>hi</Text>
     </Fragment>
-  )
-}
+  );
+};
+
+export default History;
+
+History.getLayout = getLayout;
