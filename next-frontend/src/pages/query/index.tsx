@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useState } from 'react';
+import SyntaxHighlightedDisplay from '@/components/SyntaxHighlightedDisplay';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,10 @@ export default function Home() {
       const inputValue = e.target.value
       setValue(inputValue)
   }
+  const messages = [
+    { type: 'user', content: `Show me all users with the id of 69`},
+    { type: 'system', content: `SELECT * FROM USERS WHERE id='69';`},
+  ]
 
   return (
     <Fragment>
@@ -35,12 +40,13 @@ export default function Home() {
         />
         <Card w='50%' h='full'>
           <CardHeader>
-            Your Query
+            Your Query History
           </CardHeader>
           <Divider color='green' />
           <CardBody>
             <Text mb='8px'>{value}</Text>
           </CardBody>
+          <SyntaxHighlightedDisplay messages={messages} />
         </Card>
       </VStack>
     </Fragment>
