@@ -20,6 +20,7 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
+  { name: 'Home', href: '/' },
   { name: 'Query', href: '/query' },
   { name: 'History', href: '/history' },
 ];
@@ -66,7 +67,7 @@ export const NavDrawer = () => {
                 <NextLink
                   passHref
                   key={`${index}${link.name}`}
-                  href={link.href ?? '/settings'}>
+                  href={link.href ?? '/'}>
                   <Link cursor={'pointer'} onClick={onClose}>
                     {link.name}
                   </Link>
