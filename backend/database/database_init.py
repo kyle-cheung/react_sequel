@@ -1,4 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, MetaData
+from databases import Database
 from dotenv import load_dotenv
 import os
 
@@ -9,6 +10,11 @@ password = os.environ['POSTGRES_PASSWORD']  # Get password from the environment
 db_user = 'sequel_user'
 db_name = 'ecom_sales'
 # Define your connection string
-connection_string = f"postgresql://{db_user}:{password}@localhost:5432/{db_name}"
+DATABASE_URL = f"postgresql://{db_user}:{password}@localhost:5432/{db_name}"
 
-db = SQLAlchemy()
+# SQLAlchemy
+engine = create_engine(DATABASE_URL)
+metadata = MetaData()
+
+# databases query builder
+database = Database(DATABASE_URL)

@@ -1,42 +1,70 @@
-from flask import Flask, request, jsonify, render_template, json
-from flask_cors import CORS
-from database.database_init import db, connection_string
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from database.database_init import database, engine, metadata
 import query
+from typing import Optional
+import logging
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-db.init_app(app)
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
 
 gpt = query.init_conversation_chain()
 
-@app.route("/server")
+@app.get("/server")
 def index():
-    return jsonify({"status": "succeeded", "results": {"sql_query": "SELECT * FROM sales", "sql_table": "1"}})
+    return {"status": "succeeded"}
+
+class QueryInput(BaseModel):
+    userInput: str
 
 
-@app.route("/server/query", methods=['POST'])
-def process_query():
+class QueryOutput(BaseModel):
+    status: str
+    sql_query: Optional[str] = None
+    message: Optional[str] = None
+
+
+@app.post("/server/query", response_model=QueryOutput)
+async def process_query(input: QueryInput):
     try:
-        user_input = request.json['userInput']
-        gpt_response = gpt.predict(input=user_input)
+        logger.debug(f"Received input: {input.userInput}")
+
+        gpt_response = gpt.predict(input=input.userInput)
+
+        logger.debug(f"Generated gpt_response: {gpt_response}")
+
         sql_query = query.extract_sql_query(gpt_response)
 
-        return jsonify({
+        logger.debug(f"Extracted SQL query: {sql_query}")
+
+        return {
             'status': 'success',
             'sql_query': sql_query
-        }), 200  # Return status code 200 for successful response
+        }
 
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500  # Return status code 500 for internal server error
-
-
+        logger.error(f"Error processing query: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
