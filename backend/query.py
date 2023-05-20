@@ -1,6 +1,8 @@
+from database.database_init import engine
 import os
 import re
 import psycopg2
+from sqlalchemy import inspect
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 from langchain import PromptTemplate, LLMChain,  ConversationChain
@@ -36,18 +38,21 @@ def try_connection():
         return {"status" : "error"}
     
 def get_postgres_schema():
-    with psycopg2.connect(connection_string) as conn:
-        cursor = conn.cursor()
+    # Use the SQLAlchemy engine to connect to the database
+    with engine.connect() as connection:
+        # Use SQLAlchemy's Inspector to get database metadata
+        inspector = inspect(connection)
 
         # Get a list of table names
-        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
-        tables = cursor.fetchall()
+        tables = inspector.get_table_names()
+
         table_structure = {}
 
         # Iterate over each table and get column information
         for table in tables:
-            cursor.execute(f"SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '{table[0]}';")
-            table_structure[table[0]] = cursor.fetchall()
+            columns = inspector.get_columns(table)
+            # Store a list of column names and types for each table
+            table_structure[table] = [(column['name'], column['type']) for column in columns]
 
         return table_structure
     
