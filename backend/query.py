@@ -71,7 +71,7 @@ def init_llm():
         Answer: 
     """
     prompt = PromptTemplate(template = template, input_variables=["user_prompt", "table_structure"])
-    chat = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.1, openai_api_key=openai_api_key)
+    chat = ChatOpenAI(model_name="gpt-4", temperature=0.1, openai_api_key=openai_api_key)
     llm_chain = LLMChain(prompt=prompt, llm=chat)
     return prompt, llm_chain, chat
 
@@ -99,7 +99,7 @@ def init_conversation_chain():
         HumanMessagePromptTemplate.from_template("{input}")
     ])
     
-    llm = ChatOpenAI(temperature=0.1, openai_api_key=openai_api_key)
+    llm = ChatOpenAI(model_name="gpt-4", temperature=0, openai_api_key=openai_api_key)
     memory = ConversationBufferMemory(return_messages=True)
     conversation = ConversationChain(memory=memory, prompt=prompt, llm=llm)
     return conversation
